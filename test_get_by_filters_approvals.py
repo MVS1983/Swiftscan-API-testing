@@ -35,15 +35,16 @@ def extract_values_from_response(request):
         raise ValueError("Not enough values in the response to extract a sample of 1.")
 
     random_values = random.choice(extracted_values)
-    return url, random_values
+    several_values = random.sample(extracted_values, k=5)
+    return url, random_values, several_values
 
 
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_value_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     value = random_values[2]
-    resp, body = fetch_get(url, params=[f'value={value}'])
+    resp, body = fetch_get(url, params=[f'value={value}&limit=10000'])
 
     print(f"Status code: {resp.status_code}")
     assert resp.status_code == 200, f"Expected status code 200, but got {resp.status_code} instead."
@@ -62,7 +63,7 @@ def test_value_filter(extract_values_from_response):
                          indirect=True)  # The indirect=True argument tells pytest to pass these values to the fixture
 # through the request object instead of directly to the test function.
 def test_value_gt_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     value = random_values[2]
     resp, body = fetch_get(url, params=[f'valueFilterGt={value}'])
 
@@ -78,7 +79,7 @@ def test_value_gt_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_value_ge_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     value = random_values[2]
     resp, body = fetch_get(url, params=[f'valueFilterGe={value}'])
 
@@ -94,7 +95,7 @@ def test_value_ge_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_value_lt_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     value = random_values[2]
     resp, body = fetch_get(url, params=[f'valueFilterLt={value}'])
 
@@ -110,7 +111,7 @@ def test_value_lt_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_value_le_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     value = random_values[2]
     resp, body = fetch_get(url, params=[f'valueFilterLe={value}'])
 
@@ -126,7 +127,7 @@ def test_value_le_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_value_sort_asc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['valueSortAsc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -146,7 +147,7 @@ def test_value_sort_asc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_value_sort_desc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['valueSortDesc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -166,7 +167,7 @@ def test_value_sort_desc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_number_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     blockNumber = random_values[0]
     resp, body = fetch_get(url, params=[f'blockNumber={blockNumber}'])
 
@@ -187,7 +188,7 @@ def test_block_number_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_number_value_ge(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     blockNumber = random_values[0]
     resp, body = fetch_get(url, params=[f'blockNumberFilterGe={blockNumber}'])
 
@@ -203,7 +204,7 @@ def test_block_number_value_ge(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_number_value_lt(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     blockNumber = random_values[0]
     resp, body = fetch_get(url, params=[f'blockNumberFilterLt={blockNumber}'])
 
@@ -219,7 +220,7 @@ def test_block_number_value_lt(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_number_sort_asc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['blockNumberSortAsc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -240,7 +241,7 @@ def test_block_number_sort_asc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_ts_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     blockTs = random_values[1]
     resp, body = fetch_get(url, params=[f'blockTs={blockTs}'])
 
@@ -261,7 +262,7 @@ def test_block_ts_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_ts_value_ge(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     blockTs = random_values[1]
     resp, body = fetch_get(url, params=[f'blockTsFilterGe={blockTs}'])
     objs = body['values']
@@ -273,7 +274,7 @@ def test_block_ts_value_ge(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_ts_value_lt(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     blockTs = random_values[1]
     resp, body = fetch_get(url, params=[f'blockTsFilterLt={blockTs}'])
 
@@ -289,7 +290,7 @@ def test_block_ts_value_lt(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_ts_sort_asc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['blockTsSortAsc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -310,7 +311,7 @@ def test_block_ts_sort_asc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_block_ts_sort_desc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['blockTsSortDesc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -332,9 +333,9 @@ def test_block_ts_sort_desc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_owner_value_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     owner = random_values[3]
-    resp, body = fetch_get(url, params=[f'owner={owner}&limit=10000'])
+    resp, body = fetch_get(url, params=[f'owner={owner}'])
 
     print(f"Status code: {resp.status_code}")
     assert resp.status_code == 200, f"Expected status code 200, but got {resp.status_code} instead."
@@ -345,14 +346,12 @@ def test_owner_value_filter(extract_values_from_response):
         assert_that(str(obj['owner'])).is_equal_to(owner).described_as(
             f"The owner address filter is not working correctly."
             f"Expected owner address '{owner}' in the params, but got '{str(obj['owner'])}' in the response objects.")
-        assert_that(len(objs)).is_equal_to(int(body['total'])).described_as(
-            f"Expected 'total' in response body ({body['total']}) to match the length of 'objs' ({len(objs)})")
 
 
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_owner_sort_asc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['ownerSortAsc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -375,7 +374,7 @@ def test_owner_sort_asc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_owner_sort_desc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['ownerSortDesc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -388,8 +387,8 @@ def test_owner_sort_desc(extract_values_from_response):
     # Verify if the list is sorted
     is_sorted = all(values[i] >= values[i + 1] for i in range(len(values) - 1))
 
-    for owner in values:
-        print(f"owner: {owner}")
+    for elem in values:
+        print(f"owner: {elem}")
 
     assert is_sorted, "Owners are not sorted in descending order."
     print("All owner addresses are sorted in descending order.")
@@ -398,9 +397,9 @@ def test_owner_sort_desc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_spender_value_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     spender = random_values[4]
-    resp, body = fetch_get(url, params=[f'spender={spender}&limit=10000'])
+    resp, body = fetch_get(url, params=[f'spender={spender}'])
 
     print(f"Status code: {resp.status_code}")
     assert resp.status_code == 200, f"Expected status code 200, but got {resp.status_code} instead."
@@ -411,14 +410,12 @@ def test_spender_value_filter(extract_values_from_response):
         assert_that(str(obj['spender'])).is_equal_to(spender).described_as(
             f"The spender address filter is not working correctly."
             f"Expected spender address '{spender}' in the params, but got '{str(obj['spender'])}' in the response objects.")
-        assert_that(len(objs)).is_equal_to(int(body['total'])).described_as(
-            f"Expected 'total' in response body ({body['total']}) to match the length of 'objs' ({len(objs)})")
 
 
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_spender_sort_asc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['spenderSortAsc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -441,7 +438,7 @@ def test_spender_sort_asc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_spender_sort_desc(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
     resp, body = fetch_get(url, params=['spenderSortDesc=true'])
 
     print(f"Status code: {resp.status_code}")
@@ -464,7 +461,7 @@ def test_spender_sort_desc(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_tx_hash_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     txHash = random_values[5]
     resp, body = fetch_get(url, params=[f'txHash={txHash}'])
 
@@ -485,7 +482,7 @@ def test_tx_hash_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_log_index_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     logIndex = random_values[7]
     resp, body = fetch_get(url, params=[f'logIndex={logIndex}&limit={10000}'])
 
@@ -507,7 +504,7 @@ def test_log_index_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_indexed_at_filter(extract_values_from_response):
-    url, random_values = extract_values_from_response
+    url, random_values, _ = extract_values_from_response
     indexedAt = random_values[6]
     resp, body = fetch_get(url, params=[f'indexedAt={indexedAt}'])
 
@@ -528,7 +525,7 @@ def test_indexed_at_filter(extract_values_from_response):
 @pytest.mark.parametrize("extract_values_from_response", [f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"],
                          indirect=True)
 def test_random_limit(extract_values_from_response):
-    url, _ = extract_values_from_response
+    url, _, _ = extract_values_from_response
 
     # Generate a random limit value
     random_limit = get_random_limit()
@@ -545,3 +542,59 @@ def test_random_limit(extract_values_from_response):
     assert_that(len(objs)).is_equal_to(random_limit).described_as(
         f"The number of objects returned in the response "
         f"{len(objs)} does not match the expected value {random_limit}")
+
+
+def extract_field_value(obj, filter_name):
+    """Extracts the relevant field value from a response object based on the filter name."""
+    field_map = {
+        "valueFilterIn": int(obj["value"]),
+        "ownerFilterIn": obj["owner"],
+        "spenderFilterIn": obj["spender"],
+        "txHashFilterIn": obj["txHash"],
+        "blockNumberFilterIn": int(obj["blockNumber"]),
+    }
+    return field_map[filter_name]
+
+
+@pytest.mark.parametrize(
+    "filter_name, extract_values_from_response",
+    [
+        ("valueFilterIn", f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"),
+        ("ownerFilterIn", f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"),
+        ("spenderFilterIn", f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"),
+        ("txHashFilterIn", f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"),
+        ("blockNumberFilterIn", f"{BASE_URL_IDX}api/v1/events/GetByFiltersApprovals"),
+    ],
+    indirect=["extract_values_from_response"]
+)
+def test_filter_in(filter_name, extract_values_from_response):
+    url, _, several_values = extract_values_from_response
+    # Extract corresponding field values for the current filter
+    field_map = {
+        "valueFilterIn": 2,
+        "ownerFilterIn": 3,
+        "spenderFilterIn": 4,
+        "txHashFilterIn": 5,
+        "blockNumberFilterIn": 0,
+    }
+    values = [item[field_map[filter_name]] for item in several_values]
+    filter_value = ','.join(map(str, values))
+
+    resp, body = fetch_get(url, params=[f"{filter_name}={filter_value}&limit=10000"])
+
+    print(f"Status code: {resp.status_code}")
+    assert resp.status_code == 200, f"Expected status code 200, but got {resp.status_code} instead."
+
+    objs = body["values"]
+    obj_value_list = [extract_field_value(obj, filter_name) for obj in objs]
+
+    # Assert the filter works correctly
+    assert_that(set(obj_value_list)).is_equal_to(set(values)).described_as(
+        f"The {filter_name} is not working correctly. "
+        f"Expected: '{set(values)}', but got: '{set(obj_value_list)}'."
+    )
+    print(f"Values from params: {set(values)}, values from response: {set(obj_value_list)}")
+
+    # Assert 'total' matches the number of objects
+    assert_that(len(objs)).is_equal_to(int(body["total"])).described_as(
+        f"Expected 'total' in response body ({body['total']}) to match the length of 'objs' ({len(objs)}).")
